@@ -17,7 +17,9 @@ export default function VideoBreak({
     target: ref,
     offset: ["start end", "end start"],
   })
-  const scale = useTransform(scrollYProgress, [0, 1], [1.05, 1.16])
+  // Only the dark overlay breathes with scroll now — the video itself is
+  // shown at object-fit:contain (its real, uncropped frame), so scaling
+  // it up here would just crop back into the letterboxed edges.
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.55, 0.25, 0.25, 0.55])
 
   return (
@@ -29,15 +31,14 @@ export default function VideoBreak({
       className="group relative block h-[70vh] w-full cursor-pointer overflow-hidden bg-black text-left md:h-[92vh]"
       aria-label={label ? `Voir « ${label} »` : "Voir la vidéo"}
     >
-      <motion.video
+      <video
         src={src}
         autoPlay
         muted
         loop
         playsInline
         preload="metadata"
-        style={{ scale }}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-contain"
       />
       <motion.div style={{ opacity: overlayOpacity }} className="absolute inset-0 bg-black" />
       <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
