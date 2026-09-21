@@ -48,10 +48,10 @@ export const outfits: Outfit[] = [
     id: "tenue-03",
     index: "03",
     title: "Tenue 03",
-    note: "Vestiaire vintage, matières brutes.",
+    note: "Matières brutes, patine naturelle.",
     images: [m("media/img/tenue/t3-1.webp"), m("media/img/tenue/t3-2.webp"), m("media/img/tenue/t3-3.webp"), m("media/img/tenue/t3-4.webp")],
     features: [
-      { label: "Origine", detail: "Sélection vintage, pièces chinées une par une en boutique." },
+      { label: "Sélection", detail: "Des pièces choisies pour durer, à essayer en boutique." },
       { label: "Matières", detail: "Denim brut et toile lavée, patine naturelle." },
       { label: "Esprit", detail: "Rien de neuf pour de vrai — chaque pièce a déjà son histoire." },
     ],
@@ -95,10 +95,10 @@ export const outfits: Outfit[] = [
     id: "tenue-07",
     index: "07",
     title: "Tenue 07",
-    note: "Sneakers rares, dernier détail.",
+    note: "Sneakers, dernier détail.",
     images: [m("media/img/tenue/t7-1.webp"), m("media/img/tenue/t7-2.webp")],
     features: [
-      { label: "Sneakers", detail: "Une paire rare, chinée pour clore la silhouette." },
+      { label: "Sneakers", detail: "Une paire choisie pour clore la silhouette." },
       { label: "Détail signature", detail: "Le dernier regard avant de sortir — toujours sur les chaussures." },
     ],
   },
@@ -134,3 +134,12 @@ export const breakVideos: BreakClip[] = [
 
 export const heroVideo = m("media/video/hero.mp4")
 export const logo = m("media/img/logo.webp")
+
+export const boutique = {
+  facade: m("media/img/boutique/b1-facade.webp"),
+  table: m("media/img/boutique/b2-table.webp"),
+  vitrine: m("media/img/boutique/b3-vitrine.webp"),
+  portant: m("media/img/boutique/b4-portant.webp"),
+  table2: m("media/img/boutique/b5-table2.webp"),
+  niche: m("media/img/boutique/b6-niche.webp"),
+}

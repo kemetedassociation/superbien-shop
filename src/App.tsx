@@ -3,18 +3,18 @@ import { useState } from "react"
 import MetroHero from "@/components/ui/scroll-locked-video-hero"
 import SiteHeader from "@/components/site-header"
 import SiteFooter from "@/components/site-footer"
-import FloatingIntro from "@/components/floating-intro"
+import BoutiqueSection from "@/components/boutique-section"
+import ReviewsSection from "@/components/reviews-section"
 import OutfitMosaic from "@/components/outfit-mosaic"
 import VideoBreak from "@/components/video-break"
 import ProductSheet from "@/components/product-sheet"
 import VideoLightbox from "@/components/video-lightbox"
-import ImageLightbox from "@/components/image-lightbox"
 import { breakVideos, heroVideo, logo, outfits, type BreakClip } from "@/lib/content"
+import { shop } from "@/lib/shop"
 
 export default function App() {
   const [openOutfitId, setOpenOutfitId] = useState<string | null>(null)
   const [openClip, setOpenClip] = useState<BreakClip | null>(null)
-  const [openImage, setOpenImage] = useState<string | null>(null)
 
   const openOutfit = outfits.find((o) => o.id === openOutfitId) ?? null
 
@@ -26,14 +26,23 @@ export default function App() {
         videoSrc={heroVideo}
         logoSrc={logo}
         logoAlt="SUPERBIEN"
-        kicker="Sneakers · Vestiaire vintage · Streetwear"
-        tagline="Le meilleur du streetwear & du vintage."
+        kicker="Prêt-à-porter homme · Besançon"
+        story={{
+          title: "Boutique de prêt-à-porter homme haut de gamme, au cœur de Besançon.",
+          subtitle: "Norse Projects · Les Deux · Homecore · Universal Works · Paraboot · Autry",
+        }}
+        tagline="Trouvez la pièce qui vous ressemble."
+        description="Passez la porte : on vous accueille, on vous conseille, et vous repartez avec une tenue qui vous va."
+        ctas={[
+          { label: "Nous rendre visite", href: shop.mapsHref, target: "_blank" },
+          { label: "Découvrir la boutique", action: "continue", variant: "ghost" },
+        ]}
         scrollHint="SCROLL"
         signature={false}
         scrubDistance={4200}
       />
 
-      <FloatingIntro onOpenImage={setOpenImage} />
+      <BoutiqueSection />
 
       <main id="tenues">
         {outfits.map((outfit, i) => (
@@ -68,11 +77,12 @@ export default function App() {
         ))}
       </main>
 
+      <ReviewsSection />
+
       <SiteFooter />
 
       <ProductSheet outfit={openOutfit} onClose={() => setOpenOutfitId(null)} />
       <VideoLightbox clip={openClip} onClose={() => setOpenClip(null)} />
-      <ImageLightbox src={openImage} onClose={() => setOpenImage(null)} />
     </>
   )
 }

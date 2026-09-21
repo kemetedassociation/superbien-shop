@@ -21,11 +21,26 @@ export interface MetroHeroProps {
   kicker?: string
   scrollHint?: string
   tagline?: string
+  /** Presentation text shown mid-scrub, between the logo and the closing tagline. */
+  story?: { title: string; subtitle?: string }
+  /** Sentence under the closing tagline. */
+  description?: string
+  /** Buttons under the closing tagline. `continue` releases the lock and scrolls on. */
+  ctas?: HeroCta[]
   signature?: { name: string; url: string } | false
   /** Total input distance (px) needed to scrub the full video. Tune to taste. */
   scrubDistance?: number
   className?: string
   style?: React.CSSProperties
+}
+
+export interface HeroCta {
+  label: string
+  href?: string
+  target?: string
+  variant?: "primary" | "ghost"
+  /** Releases the scroll lock and continues down the page. */
+  action?: "continue"
 }
 
 const DEFAULT_VIDEO = ""
@@ -45,6 +60,9 @@ export default function MetroHero({
   kicker = "",
   scrollHint = "SCROLL",
   tagline = "",
+  story,
+  description = "",
+  ctas = [],
   signature = false,
   scrubDistance = 3200,
   className,
@@ -55,6 +73,10 @@ export default function MetroHero({
   const titleRef = useRef<HTMLDivElement>(null)
   const hintRef = useRef<HTMLDivElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
+  const storyRef = useRef<HTMLDivElement>(null)
+  const scrimRef = useRef<HTMLDivElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const continueRef = useRef<() => void>(() => {})
   const progressBarRef = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
 
@@ -210,6 +232,55 @@ export default function MetroHero({
     section.addEventListener("touchstart", onTouchStart, { passive: true, capture: true })
     section.addEventListener("touchmove", onTouchMove, { passive: false, capture: true })
 
+    continueRef.current = () => {
+      targetProgress = 1
+      releaseLock(section.offsetTop + section.offsetHeight)
+    }
+
+    // Three text stages over the scrub: logo + kicker (0–0.35), the shop
+    // presentation (0.36–0.76), then tagline + pitch + buttons (0.82–1).
+    function paint(p: number) {
+      if (videoRef.current) {
+        const scale = 1 + p * 0.06
+        videoRef.current.style.transform = `scale(${scale})`
+      }
+      if (titleRef.current) {
+        const t = 1 - clamp(p / 0.35, 0, 1)
+        titleRef.current.style.opacity = String(t)
+        titleRef.current.style.transform = `translateY(${(1 - t) * -24}px) scale(${0.96 + t * 0.04})`
+        titleRef.current.style.filter = `blur(${(1 - t) * 10}px)`
+      }
+      if (hintRef.current) {
+        hintRef.current.style.opacity = hasStartedScrolling ? "0" : "1"
+      }
+
+      const tStory = clamp((p - 0.36) / 0.1, 0, 1) * (1 - clamp((p - 0.66) / 0.1, 0, 1))
+      // Mirrors the title's blur-focus treatment, timed as the payoff
+      // once the reveal is nearly complete — not a background afterthought.
+      const tEnd = clamp((p - 0.82) / 0.18, 0, 1)
+
+      if (scrimRef.current) {
+        scrimRef.current.style.opacity = String(Math.max(tStory, tEnd))
+      }
+      if (storyRef.current) {
+        storyRef.current.style.opacity = String(tStory)
+        storyRef.current.style.transform = `translateY(${(1 - tStory) * 22}px)`
+        storyRef.current.style.filter = `blur(${(1 - tStory) * 8}px)`
+      }
+      if (taglineRef.current) {
+        taglineRef.current.style.opacity = String(tEnd)
+        taglineRef.current.style.transform = `translateY(${(1 - tEnd) * 20}px) scale(${0.97 + tEnd * 0.03})`
+        taglineRef.current.style.filter = `blur(${(1 - tEnd) * 8}px)`
+      }
+      if (ctaRef.current) {
+        ctaRef.current.style.pointerEvents = tEnd > 0.6 ? "auto" : "none"
+        ctaRef.current.style.visibility = tEnd > 0.02 ? "visible" : "hidden"
+      }
+      if (progressBarRef.current) {
+        progressBarRef.current.style.transform = `scaleX(${p})`
+      }
+    }
+
     function frame() {
       // Lower lerp factor = slower catch-up to the scroll target, so the
       // scrub reads as fluid rather than snapping to the wheel input.
@@ -218,37 +289,15 @@ export default function MetroHero({
       if (duration > 0) {
         seekTo(currentProgress * duration)
       }
-
-      if (videoRef.current) {
-        const scale = 1 + currentProgress * 0.06
-        videoRef.current.style.transform = `scale(${scale})`
-      }
-      if (titleRef.current) {
-        const t = 1 - clamp(currentProgress / 0.35, 0, 1)
-        titleRef.current.style.opacity = String(t)
-        titleRef.current.style.transform = `translateY(${(1 - t) * -24}px) scale(${0.96 + t * 0.04})`
-        titleRef.current.style.filter = `blur(${(1 - t) * 10}px)`
-      }
-      if (hintRef.current) {
-        hintRef.current.style.opacity = hasStartedScrolling ? "0" : "1"
-      }
-      if (taglineRef.current) {
-        // Mirrors the title's blur-focus treatment, timed as the payoff
-        // once the reveal is nearly complete — not a background afterthought.
-        const t = clamp((currentProgress - 0.82) / 0.18, 0, 1)
-        taglineRef.current.style.opacity = String(t)
-        taglineRef.current.style.transform = `translateY(${(1 - t) * 20}px) scale(${0.97 + t * 0.03})`
-        taglineRef.current.style.filter = `blur(${(1 - t) * 8}px)`
-      }
-      if (progressBarRef.current) {
-        progressBarRef.current.style.transform = `scaleX(${currentProgress})`
-      }
+      paint(currentProgress)
 
       rafId = requestAnimationFrame(frame)
     }
 
     if (!reduceMotion) {
       rafId = requestAnimationFrame(frame)
+    } else {
+      paint(0.95)
     }
 
     return () => {
@@ -357,15 +406,30 @@ export default function MetroHero({
         )}
       </div>
 
-      {tagline && (
+      {/* Darkens the video behind the text stages so copy stays readable. */}
+      <div
+        ref={scrimRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          opacity: 0,
+          background:
+            "radial-gradient(ellipse at center, rgba(5,7,13,0.78), rgba(5,7,13,0.6) 55%, rgba(5,7,13,0.4))",
+          pointerEvents: "none",
+        }}
+      />
+
+      {story && (
         <div
-          ref={taglineRef}
+          ref={storyRef}
           style={{
             position: "absolute",
             inset: 0,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            gap: "clamp(12px, 2.4vh, 24px)",
             padding: "0 8%",
             textAlign: "center",
             opacity: 0,
@@ -375,16 +439,135 @@ export default function MetroHero({
           <span
             style={{
               fontFamily: SANS,
-              fontWeight: 700,
-              fontSize: "clamp(20px, 3.4vw, 40px)",
-              lineHeight: 1.2,
-              letterSpacing: "-0.01em",
+              fontWeight: 800,
+              fontSize: "clamp(22px, 3.4vw, 44px)",
+              lineHeight: 1.12,
+              letterSpacing: "-0.02em",
+              maxWidth: "20ch",
+              textWrap: "balance",
+              color: COL_TEXT,
+              textShadow: "0 4px 24px rgba(0,0,0,0.5)",
+            }}
+          >
+            {story.title}
+          </span>
+          {story.subtitle && (
+            <span
+              style={{
+                fontFamily: SANS,
+                fontWeight: 600,
+                fontSize: "clamp(10px, 1.3vw, 14px)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                maxWidth: "46ch",
+                lineHeight: 1.8,
+                textWrap: "balance",
+                color: "rgba(242,244,248,0.8)",
+              }}
+            >
+              {story.subtitle}
+            </span>
+          )}
+        </div>
+      )}
+
+      {tagline && (
+        <div
+          ref={taglineRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "clamp(14px, 2.6vh, 26px)",
+            padding: "0 8%",
+            textAlign: "center",
+            opacity: 0,
+            pointerEvents: "none",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: SANS,
+              fontWeight: 800,
+              fontSize: "clamp(22px, 3.4vw, 44px)",
+              lineHeight: 1.12,
+              letterSpacing: "-0.02em",
+              maxWidth: "22ch",
+              textWrap: "balance",
               color: COL_TEXT,
               textShadow: "0 4px 24px rgba(0,0,0,0.5)",
             }}
           >
             {tagline}
           </span>
+          {description && (
+            <p
+              style={{
+                margin: 0,
+                fontFamily: SANS,
+                fontWeight: 500,
+                fontSize: "clamp(14px, 1.5vw, 18px)",
+                lineHeight: 1.55,
+                maxWidth: "36ch",
+                textWrap: "balance",
+                color: "rgba(242,244,248,0.88)",
+                textShadow: "0 2px 16px rgba(0,0,0,0.5)",
+              }}
+            >
+              {description}
+            </p>
+          )}
+          {ctas.length > 0 && (
+            <div
+              ref={ctaRef}
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: 12,
+                marginTop: 4,
+                visibility: "hidden",
+                pointerEvents: "none",
+              }}
+            >
+              {ctas.map((cta) => {
+                const ghost = cta.variant === "ghost"
+                const look: React.CSSProperties = {
+                  fontFamily: SANS,
+                  fontWeight: 700,
+                  fontSize: 12,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  padding: "14px 24px",
+                  borderRadius: 2,
+                  border: ghost ? "1px solid rgba(242,244,248,0.6)" : "1px solid #f2f4f8",
+                  background: ghost ? "rgba(5,7,13,0.35)" : "#f2f4f8",
+                  color: ghost ? "#f2f4f8" : "#05070d",
+                  backdropFilter: ghost ? "blur(6px)" : undefined,
+                }
+                return cta.action === "continue" ? (
+                  <button key={cta.label} type="button" style={look} onClick={() => continueRef.current()}>
+                    {cta.label}
+                  </button>
+                ) : (
+                  <a
+                    key={cta.label}
+                    href={cta.href}
+                    target={cta.target}
+                    rel={cta.target === "_blank" ? "noopener noreferrer" : undefined}
+                    style={look}
+                  >
+                    {cta.label}
+                  </a>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
 
