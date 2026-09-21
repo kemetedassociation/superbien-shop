@@ -26,6 +26,7 @@ export default function App() {
         videoSrc={heroVideo}
         logoSrc={logo}
         logoAlt="SUPERBIEN"
+        kicker="Sneakers · Vestiaire vintage · Streetwear"
         tagline="Le meilleur du streetwear & du vintage."
         scrollHint="SCROLL"
         signature={false}

@@ -38,7 +38,7 @@ export default function VideoBreak({
         loop
         playsInline
         preload="metadata"
-        className="absolute inset-0 h-full w-full object-contain"
+        className="absolute inset-0 h-full w-full object-cover md:object-contain"
       />
       <motion.div style={{ opacity: overlayOpacity }} className="absolute inset-0 bg-black" />
       <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />

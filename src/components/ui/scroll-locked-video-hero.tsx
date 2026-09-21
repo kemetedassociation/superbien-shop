@@ -18,6 +18,7 @@ export interface MetroHeroProps {
   videoSrc?: string
   logoSrc?: string
   logoAlt?: string
+  kicker?: string
   scrollHint?: string
   tagline?: string
   signature?: { name: string; url: string } | false
@@ -41,6 +42,7 @@ export default function MetroHero({
   videoSrc = DEFAULT_VIDEO,
   logoSrc,
   logoAlt = "SUPERBIEN",
+  kicker = "",
   scrollHint = "SCROLL",
   tagline = "",
   signature = false,
@@ -283,12 +285,15 @@ export default function MetroHero({
         muted
         playsInline
         preload="auto"
+        // Full-bleed cropped fit on phones (screen is close enough to the
+        // clip's own portrait aspect that little is lost) — real,
+        // uncropped frame on wider screens where cover would crop hard.
+        className="object-cover md:object-contain"
         style={{
           position: "absolute",
           inset: 0,
           width: "100%",
           height: "100%",
-          objectFit: "contain",
           opacity: ready ? 1 : 0,
           transformOrigin: "center center",
           willChange: "transform",
@@ -313,8 +318,10 @@ export default function MetroHero({
           position: "absolute",
           inset: 0,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          gap: "clamp(10px, 2vh, 22px)",
           padding: "0 6%",
           textAlign: "center",
           pointerEvents: "none",
@@ -332,6 +339,22 @@ export default function MetroHero({
             }}
           />
         ) : null}
+        {kicker && (
+          <span
+            style={{
+              fontFamily: SANS,
+              fontWeight: 600,
+              fontSize: "clamp(9px, 1.6vw, 15px)",
+              letterSpacing: "clamp(0.12em, 0.5vw, 0.28em)",
+              textWrap: "balance",
+              textTransform: "uppercase",
+              color: "rgba(242,244,248,0.85)",
+              textShadow: "0 2px 16px rgba(0,0,0,0.5)",
+            }}
+          >
+            {kicker}
+          </span>
+        )}
       </div>
 
       {tagline && (
