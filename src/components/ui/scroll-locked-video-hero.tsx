@@ -30,6 +30,11 @@ export interface MetroHeroProps {
   signature?: { name: string; url: string } | false
   /** Total input distance (px) needed to scrub the full video. Tune to taste. */
   scrubDistance?: number
+  /**
+   * How many finger swipes it takes to play the whole clip. One swipe is
+   * counted as ~45% of the screen height. Ignored if `scrubDistance` is set.
+   */
+  swipes?: number
   className?: string
   style?: React.CSSProperties
 }
@@ -64,7 +69,8 @@ export default function MetroHero({
   description = "",
   ctas = [],
   signature = false,
-  scrubDistance = 3200,
+  scrubDistance,
+  swipes = 5,
   className,
   style,
 }: MetroHeroProps) {
@@ -179,7 +185,8 @@ export default function MetroHero({
     engageLock()
 
     function addDelta(deltaY: number) {
-      const next = clamp(targetProgress + deltaY / scrubDistance, 0, 1)
+      const distance = scrubDistance ?? swipes * 0.45 * window.innerHeight
+      const next = clamp(targetProgress + deltaY / distance, 0, 1)
       targetProgress = next
       if (targetProgress > 0.001) hasStartedScrolling = true
       return true
@@ -312,7 +319,7 @@ export default function MetroHero({
       cancelAnimationFrame(rafId)
       releaseLock(lockedScrollY)
     }
-  }, [scrubDistance])
+  }, [scrubDistance, swipes])
 
   return (
     <div

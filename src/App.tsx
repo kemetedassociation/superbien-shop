@@ -39,7 +39,7 @@ export default function App() {
         ]}
         scrollHint="SCROLL"
         signature={false}
-        scrubDistance={4200}
+        swipes={5}
       />
 
       <BoutiqueSection />
