@@ -5,6 +5,7 @@ import {
     type CSSProperties,
     type KeyboardEvent,
     type ReactNode,
+    type TouchEvent,
     useCallback,
     useEffect,
     useId,
@@ -177,6 +178,7 @@ export function SqueezeCarousel({
     const ids = useId();
     const seed = useRef(0);
     const strip = useRef<HTMLDivElement>(null);
+    const touchStart = useRef<{ x: number; y: number } | null>(null);
 
     /* --- the strip -------------------------------------------------------- */
 
@@ -311,6 +313,23 @@ export function SqueezeCarousel({
         step(by);
     };
 
+    // Finger swipe: a mostly-horizontal drag steps the row on, a vertical one is
+    // left to the page (the strip only claims horizontal panning, via touch-action).
+    const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+        const t = event.touches[0];
+        touchStart.current = { x: t.clientX, y: t.clientY };
+    };
+
+    const onTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+        const from = touchStart.current;
+        touchStart.current = null;
+        if (!from) return;
+        const t = event.changedTouches[0];
+        const dx = t.clientX - from.x;
+        const dy = t.clientY - from.y;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) step(dx < 0 ? 1 : -1);
+    };
+
     if (!count) return null;
 
     /* --- render ----------------------------------------------------------- */
@@ -377,7 +396,12 @@ export function SqueezeCarousel({
                 </div>
             )}
 
-            <div className="w-full overflow-hidden" style={{ height: "var(--sq-h)" }}>
+            <div
+                className="w-full overflow-hidden"
+                style={{ height: "var(--sq-h)", touchAction: "pan-y" }}
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+            >
                 <div
                     ref={strip}
                     role="tablist"

@@ -5,7 +5,7 @@ import SiteHeader from "@/components/site-header"
 import SiteFooter from "@/components/site-footer"
 import BoutiqueSection from "@/components/boutique-section"
 import ReviewsSection from "@/components/reviews-section"
-import OutfitMosaic from "@/components/outfit-mosaic"
+import OutfitChoreography from "@/components/outfit-choreography"
 import VideoBreak from "@/components/video-break"
 import ProductSheet from "@/components/product-sheet"
 import VideoLightbox from "@/components/video-lightbox"
@@ -47,11 +47,7 @@ export default function App() {
       <main id="tenues">
         {outfits.map((outfit, i) => (
           <div key={outfit.id}>
-            <OutfitMosaic
-              outfit={outfit}
-              reverse={i % 2 === 1}
-              onOpen={() => setOpenOutfitId(outfit.id)}
-            />
+            <OutfitChoreography outfit={outfit} onOpen={() => setOpenOutfitId(outfit.id)} />
             {i === 1 && (
               <VideoBreak
                 src={breakVideos[0].src}
