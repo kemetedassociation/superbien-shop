@@ -266,15 +266,17 @@ export default function MetroHero({
       if (locked) unlock()
     }
 
-    // Three text stages over the scrub: logo + kicker (0–0.35), the shop
-    // presentation (0.36–0.76), then tagline + pitch + buttons (0.82–1).
+    // Three text stages: logo + kicker fade out almost immediately, the shop
+    // presentation (story) then holds through the rest of the hand-scrubbed
+    // part and a little into the autoplay that follows, and the tagline +
+    // pitch + buttons arrive later, once the clip is playing on its own.
     function paint(p: number) {
       if (videoRef.current) {
         const scale = 1 + p * 0.06
         videoRef.current.style.transform = `scale(${scale})`
       }
       if (titleRef.current) {
-        const t = 1 - clamp(p / 0.35, 0, 1)
+        const t = 1 - clamp(p / 0.05, 0, 1)
         titleRef.current.style.opacity = String(t)
         titleRef.current.style.transform = `translateY(${(1 - t) * -24}px) scale(${0.96 + t * 0.04})`
         titleRef.current.style.filter = `blur(${(1 - t) * 10}px)`
@@ -283,7 +285,7 @@ export default function MetroHero({
         hintRef.current.style.opacity = hasStartedScrolling ? "0" : "1"
       }
 
-      const tStory = clamp((p - 0.36) / 0.1, 0, 1) * (1 - clamp((p - 0.66) / 0.1, 0, 1))
+      const tStory = clamp((p - 0.045) / 0.03, 0, 1) * (1 - clamp((p - 0.16) / 0.06, 0, 1))
       // Mirrors the title's blur-focus treatment, timed as the payoff
       // once the reveal is nearly complete — not a background afterthought.
       const tEnd = clamp((p - 0.82) / 0.18, 0, 1)

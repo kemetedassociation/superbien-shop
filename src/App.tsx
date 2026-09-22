@@ -39,7 +39,8 @@ export default function App() {
         ]}
         scrollHint="SCROLL"
         signature={false}
-        swipes={5}
+        swipes={3}
+        unlockAt={0.108}
       />
 
       <BoutiqueSection />
