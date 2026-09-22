@@ -240,10 +240,16 @@ export default function MetroHero({
     }
 
     // Re-engage the lock if the user scrolls back up into the section
-    // after it released forward.
+    // after it released forward. Reads the section's own rendered position
+    // rather than window.scrollY: something else on the page (e.g. a
+    // video-break section holding its own brief scroll-pause) can
+    // temporarily pin the body and make scrollY report 0 without the user
+    // having gone anywhere near the hero — a rect check isn't fooled by that.
     const onScroll = () => {
       if (locked) return
-      if (window.scrollY <= section.offsetTop) {
+      if (document.body.style.position === "fixed") return
+      const rect = section.getBoundingClientRect()
+      if (rect.top > -10 && rect.top < 10) {
         engageLock()
         autoplaying = false
         video.pause()
