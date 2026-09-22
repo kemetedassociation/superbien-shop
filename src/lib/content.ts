@@ -133,6 +133,7 @@ export const breakVideos: BreakClip[] = [
 ]
 
 export const heroVideo = m("media/video/hero.mp4")
+export const heroPoster = m("media/img/hero-poster.webp")
 export const logo = m("media/img/logo.webp")
 
 export const boutique = {

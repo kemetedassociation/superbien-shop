@@ -9,7 +9,7 @@ import OutfitChoreography from "@/components/outfit-choreography"
 import VideoBreak from "@/components/video-break"
 import ProductSheet from "@/components/product-sheet"
 import VideoLightbox from "@/components/video-lightbox"
-import { breakVideos, heroVideo, logo, outfits, type BreakClip } from "@/lib/content"
+import { breakVideos, heroPoster, heroVideo, logo, outfits, type BreakClip } from "@/lib/content"
 import { shop } from "@/lib/shop"
 
 export default function App() {
@@ -24,6 +24,7 @@ export default function App() {
 
       <MetroHero
         videoSrc={heroVideo}
+        posterSrc={heroPoster}
         logoSrc={logo}
         logoAlt="SUPERBIEN"
         kicker="Prêt-à-porter homme · Besançon"

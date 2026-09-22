@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 // ─────────────────────────────────────────────────────────────
 // SUPERBIEN HERO — locked scroll-scrub video hero
@@ -16,6 +16,8 @@ import { useEffect, useRef, useState } from "react"
 
 export interface MetroHeroProps {
   videoSrc?: string
+  /** First-frame still shown instantly while the clip loads — avoids a blank hero. */
+  posterSrc?: string
   logoSrc?: string
   logoAlt?: string
   kicker?: string
@@ -66,6 +68,7 @@ function clamp(v: number, min: number, max: number) {
 
 export default function MetroHero({
   videoSrc = DEFAULT_VIDEO,
+  posterSrc,
   logoSrc,
   logoAlt = "SUPERBIEN",
   kicker = "",
@@ -91,7 +94,6 @@ export default function MetroHero({
   const ctaRef = useRef<HTMLDivElement>(null)
   const continueRef = useRef<() => void>(() => {})
   const progressBarRef = useRef<HTMLDivElement>(null)
-  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -118,7 +120,6 @@ export default function MetroHero({
 
     const onLoadedData = () => {
       duration = video.duration || 0
-      setReady(true)
       if (reduceMotion) {
         video.currentTime = duration * 0.92
       }
@@ -373,9 +374,13 @@ export default function MetroHero({
       <video
         ref={videoRef}
         src={videoSrc}
+        poster={posterSrc}
         muted
         playsInline
         preload="auto"
+        // @ts-expect-error -- fetchPriority landed in React's DOM types after
+        // this project's React version; the attribute itself is still valid.
+        fetchPriority="high"
         // Full-bleed cropped fit on phones (screen is close enough to the
         // clip's own portrait aspect that little is lost) — real,
         // uncropped frame on wider screens where cover would crop hard.
@@ -385,10 +390,11 @@ export default function MetroHero({
           inset: 0,
           width: "100%",
           height: "100%",
-          opacity: ready ? 1 : 0,
+          // The poster fills the frame instantly, so the video itself can be
+          // visible from the start — no more blank hero while it buffers.
+          opacity: 1,
           transformOrigin: "center center",
           willChange: "transform",
-          transition: "opacity 0.6s ease",
           touchAction: "none",
           pointerEvents: "none",
         }}
