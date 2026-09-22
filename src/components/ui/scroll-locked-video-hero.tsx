@@ -28,13 +28,19 @@ export interface MetroHeroProps {
   /** Buttons under the closing tagline. `continue` releases the lock and scrolls on. */
   ctas?: HeroCta[]
   signature?: { name: string; url: string } | false
-  /** Total input distance (px) needed to scrub the full video. Tune to taste. */
+  /** Total input distance (px) needed to scrub from 0 to `unlockAt`. Tune to taste. */
   scrubDistance?: number
   /**
-   * How many finger swipes it takes to play the whole clip. One swipe is
-   * counted as ~45% of the screen height. Ignored if `scrubDistance` is set.
+   * How many finger swipes it takes to scrub from 0 to `unlockAt`. One swipe
+   * is counted as ~45% of the screen height. Ignored if `scrubDistance` is set.
    */
   swipes?: number
+  /**
+   * Progress (0–1) at which the scroll-lock releases: past this point the
+   * clip just plays on its own and the page scrolls normally, instead of
+   * making the reader scrub through the whole thing by hand.
+   */
+  unlockAt?: number
   className?: string
   style?: React.CSSProperties
 }
@@ -71,6 +77,7 @@ export default function MetroHero({
   signature = false,
   scrubDistance,
   swipes = 5,
+  unlockAt = 0.18,
   className,
   style,
 }: MetroHeroProps) {
@@ -105,6 +112,9 @@ export default function MetroHero({
     let locked = false
     let lockedScrollY = 0
     let touchStartY = 0
+    // Once past unlockAt, the clip plays on its own timeline (video.currentTime
+    // drives currentProgress) instead of the scrub target driving a seek.
+    let autoplaying = false
 
     const onLoadedData = () => {
       duration = video.duration || 0
@@ -182,11 +192,22 @@ export default function MetroHero({
       window.scrollTo(0, targetY)
     }
 
+    // Past unlockAt: let the clip keep playing by itself and hand scrolling
+    // back to the page, instead of holding the reader through the whole clip.
+    const unlock = () => {
+      releaseLock(section.offsetTop + section.offsetHeight)
+      autoplaying = true
+      video.play().catch(() => {})
+    }
+
     engageLock()
 
     function addDelta(deltaY: number) {
-      const distance = scrubDistance ?? swipes * 0.45 * window.innerHeight
-      const next = clamp(targetProgress + deltaY / distance, 0, 1)
+      // `swipes`/`scrubDistance` size the input needed to cross the whole
+      // 0→1 range; scrubbing only ever covers 0→unlockAt, so the distance
+      // that actually has to be walked is scaled down to match.
+      const distance = (scrubDistance ?? swipes * 0.45 * window.innerHeight) / unlockAt
+      const next = clamp(targetProgress + deltaY / distance, 0, unlockAt)
       targetProgress = next
       if (targetProgress > 0.001) hasStartedScrolling = true
       return true
@@ -194,8 +215,8 @@ export default function MetroHero({
 
     const onWheel = (e: WheelEvent) => {
       if (!locked) return
-      if (targetProgress >= 1 && e.deltaY > 0) {
-        releaseLock(section.offsetTop + section.offsetHeight)
+      if (targetProgress >= unlockAt && e.deltaY > 0) {
+        unlock()
         return
       }
       addDelta(e.deltaY)
@@ -210,8 +231,8 @@ export default function MetroHero({
       const deltaY = touchStartY - y
       touchStartY = y
       if (!locked) return
-      if (targetProgress >= 1 && deltaY > 0) {
-        releaseLock(section.offsetTop + section.offsetHeight)
+      if (targetProgress >= unlockAt && deltaY > 0) {
+        unlock()
         return
       }
       addDelta(deltaY)
@@ -224,8 +245,10 @@ export default function MetroHero({
       if (locked) return
       if (window.scrollY <= section.offsetTop) {
         engageLock()
-        targetProgress = 1
-        currentProgress = 1
+        autoplaying = false
+        video.pause()
+        targetProgress = unlockAt
+        currentProgress = unlockAt
       }
     }
 
@@ -240,8 +263,7 @@ export default function MetroHero({
     section.addEventListener("touchmove", onTouchMove, { passive: false, capture: true })
 
     continueRef.current = () => {
-      targetProgress = 1
-      releaseLock(section.offsetTop + section.offsetHeight)
+      if (locked) unlock()
     }
 
     // Three text stages over the scrub: logo + kicker (0–0.35), the shop
@@ -288,13 +310,18 @@ export default function MetroHero({
       }
     }
 
-    function frame() {
-      // Lower lerp factor = slower catch-up to the scroll target, so the
-      // scrub reads as fluid rather than snapping to the wheel input.
-      currentProgress += (targetProgress - currentProgress) * 0.09
-
-      if (duration > 0) {
-        seekTo(currentProgress * duration)
+    const frame = () => {
+      if (autoplaying) {
+        // The clip now drives its own timeline; keep the text stages (story,
+        // tagline, CTAs) in sync with however far it's actually played.
+        if (duration > 0) currentProgress = video.currentTime / duration
+      } else {
+        // Lower lerp factor = slower catch-up to the scroll target, so the
+        // scrub reads as fluid rather than snapping to the wheel input.
+        currentProgress += (targetProgress - currentProgress) * 0.09
+        if (duration > 0) {
+          seekTo(currentProgress * duration)
+        }
       }
       paint(currentProgress)
 
@@ -319,7 +346,7 @@ export default function MetroHero({
       cancelAnimationFrame(rafId)
       releaseLock(lockedScrollY)
     }
-  }, [scrubDistance, swipes])
+  }, [scrubDistance, swipes, unlockAt])
 
   return (
     <div
