@@ -187,7 +187,7 @@ export default function ScrollMorphHero({
   const { width: w, height: h } = size
   const n = cards.length
   const isMobile = w < 768
-  const cardW = isMobile ? 128 : 172
+  const cardW = isMobile ? 154 : 200
   const cardH = Math.round(cardW * 1.38)
 
   const targetFor = (i: number) => {

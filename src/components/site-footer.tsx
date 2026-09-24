@@ -30,13 +30,13 @@ export default function SiteFooter() {
             href={shop.mapsHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-[2px] bg-neutral-50 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-neutral-950 transition-opacity hover:opacity-85"
+            className="rounded-[2px] bg-neutral-50 px-6 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-neutral-950 transition-opacity hover:opacity-85"
           >
             Itinéraire
           </a>
           <a
             href={shop.phoneHref}
-            className="rounded-[2px] border border-neutral-600 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-neutral-100 transition-colors hover:border-neutral-200"
+            className="rounded-[2px] border border-neutral-500 px-6 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-neutral-50 transition-colors hover:border-neutral-200"
           >
             Appeler
           </a>
@@ -44,17 +44,17 @@ export default function SiteFooter() {
             href={shop.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-[2px] border border-neutral-600 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-neutral-100 transition-colors hover:border-neutral-200"
+            className="rounded-[2px] border border-neutral-500 px-6 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-neutral-50 transition-colors hover:border-neutral-200"
           >
             {shop.instagramHandle}
           </a>
         </div>
 
-        <p className="max-w-xl text-xs uppercase leading-relaxed tracking-[0.2em] text-neutral-500">
+        <p className="max-w-xl text-sm uppercase leading-relaxed tracking-[0.16em] text-neutral-400">
           {shop.brands.join(" · ")}
         </p>
 
-        <p className="text-xs text-neutral-600">&copy; {new Date().getFullYear()} Superbien</p>
+        <p className="text-sm text-neutral-500">&copy; {new Date().getFullYear()} Superbien</p>
       </div>
     </footer>
   )

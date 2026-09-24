@@ -53,6 +53,7 @@ export default function App() {
             {i === 1 && (
               <VideoBreak
                 src={breakVideos[0].src}
+                poster={breakVideos[0].poster}
                 label={breakVideos[0].label}
                 onOpen={() => setOpenClip(breakVideos[0])}
               />
@@ -60,6 +61,7 @@ export default function App() {
             {i === 3 && (
               <VideoBreak
                 src={breakVideos[1].src}
+                poster={breakVideos[1].poster}
                 label={breakVideos[1].label}
                 onOpen={() => setOpenClip(breakVideos[1])}
               />
@@ -67,6 +69,7 @@ export default function App() {
             {i === 5 && (
               <VideoBreak
                 src={breakVideos[2].src}
+                poster={breakVideos[2].poster}
                 label={breakVideos[2].label}
                 onOpen={() => setOpenClip(breakVideos[2])}
               />

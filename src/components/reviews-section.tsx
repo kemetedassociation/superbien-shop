@@ -18,8 +18,8 @@ function Photo({ src, alt }: { src: string; alt: string }) {
 function Back({ eyebrow, text }: { eyebrow: string; text: string }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-[4cqi] p-[9cqi] text-center">
-      <p className="text-[5.4cqi] font-bold uppercase tracking-[0.2em] text-neutral-500">{eyebrow}</p>
-      <p className="text-[7.6cqi] font-medium leading-snug text-neutral-100">{text}</p>
+      <p className="text-[7.5cqi] font-bold uppercase tracking-[0.15em] text-neutral-300">{eyebrow}</p>
+      <p className="text-[10cqi] font-medium leading-snug text-neutral-50">{text}</p>
     </div>
   )
 }
@@ -38,13 +38,13 @@ function reviewCard(index: number): MorphCard {
     id: `review-${index}`,
     front: (
       <div className="flex h-full flex-col justify-between bg-neutral-900 p-[8cqi] text-left">
-        <div className="text-[8.5cqi] tracking-[0.15em] text-[#fbbc04]">{STARS}</div>
-        <p className="line-clamp-7 text-[7.4cqi] leading-snug text-neutral-100">
+        <div className="text-[9cqi] tracking-[0.15em] text-[#fbbc04]">{STARS}</div>
+        <p className="line-clamp-6 text-[9.5cqi] leading-snug text-neutral-50">
           {r.text ? `« ${r.text} »` : "A donné 5 étoiles à la boutique."}
         </p>
         <div>
-          <p className="text-[6.8cqi] font-semibold text-neutral-50">{r.author}</p>
-          <p className="text-[5.2cqi] text-neutral-500">Avis Google · {r.when}</p>
+          <p className="text-[8.5cqi] font-semibold text-neutral-50">{r.author}</p>
+          <p className="text-[7cqi] text-neutral-300">Avis Google · {r.when}</p>
         </div>
       </div>
     ),
@@ -56,10 +56,10 @@ const ratingCard: MorphCard = {
   id: "rating",
   front: (
     <div className="flex h-full flex-col items-center justify-center gap-[3cqi] bg-neutral-50 p-[8cqi] text-center text-neutral-950">
-      <p className="text-[26cqi] font-black leading-none tracking-tight">{shop.rating}</p>
-      <div className="text-[9cqi] tracking-[0.15em] text-[#f5a300]">{STARS}</div>
-      <p className="text-[6.6cqi] font-semibold">sur Google</p>
-      <p className="text-[5.2cqi] text-neutral-500">{reviews.length} avis</p>
+      <p className="text-[24cqi] font-black leading-none tracking-tight">{shop.rating}</p>
+      <div className="text-[9.5cqi] tracking-[0.15em] text-[#f5a300]">{STARS}</div>
+      <p className="text-[8.5cqi] font-semibold">sur Google</p>
+      <p className="text-[7cqi] text-neutral-600">{reviews.length} avis</p>
     </div>
   ),
   back: <Back eyebrow="Venez nous voir" text={shop.address} />,

@@ -62,9 +62,9 @@ function Details({
             : "absolute left-[4vw] top-1/2 w-[18vw] -translate-y-1/2"
         }
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">Tenue</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-400">Tenue</p>
         <p className="text-5xl font-black leading-none tracking-tight text-neutral-50 md:text-8xl">{outfit.index}</p>
-        <p className="mt-3 hidden text-sm text-neutral-400 md:block">{outfit.note}</p>
+        <p className="mt-3 hidden text-base text-neutral-300 md:block">{outfit.note}</p>
       </motion.div>
 
       <div
@@ -77,11 +77,11 @@ function Details({
         }}
       >
         <Reveal progress={progress} from={0.68} to={0.76} y={24}>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">Tenue {outfit.index}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-400">Tenue {outfit.index}</p>
           <h3 className="mt-2 text-3xl font-black uppercase leading-tight tracking-tight text-neutral-50 md:text-5xl">
             {outfit.title}
           </h3>
-          <p className="mt-2 text-sm text-neutral-400 md:text-base">{outfit.note}</p>
+          <p className="mt-2 text-base text-neutral-300 md:text-lg">{outfit.note}</p>
         </Reveal>
 
         <div className="mt-5 md:mt-8">
@@ -94,8 +94,8 @@ function Details({
               x={32}
               className="border-b border-neutral-800 py-3 md:py-4"
             >
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-100 md:text-sm">{f.label}</p>
-              <p className="mt-1 text-xs leading-relaxed text-neutral-400 md:text-sm">{f.detail}</p>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-neutral-50">{f.label}</p>
+              <p className="mt-1 text-sm leading-relaxed text-neutral-300 md:text-base">{f.detail}</p>
             </Reveal>
           ))}
         </div>
@@ -110,7 +110,7 @@ function Details({
           <button
             type="button"
             onClick={onOpen}
-            className="pointer-events-auto rounded-[2px] border border-neutral-500 px-5 py-3 text-xs font-bold uppercase tracking-[0.16em] text-neutral-100 transition-colors hover:border-neutral-200"
+            className="pointer-events-auto rounded-[2px] border border-neutral-400 px-5 py-3 text-sm font-bold uppercase tracking-[0.16em] text-neutral-50 transition-colors hover:border-neutral-200"
           >
             Voir toutes les photos
           </button>

@@ -7,10 +7,12 @@ const PAUSE_MS = 2000
 
 export default function VideoBreak({
   src,
+  poster,
   label,
   onOpen,
 }: {
   src: string
+  poster?: string
   label?: string
   onOpen: () => void
 }) {
@@ -99,9 +101,19 @@ export default function VideoBreak({
       className="group relative block h-[70vh] w-full cursor-pointer overflow-hidden bg-black text-left md:h-[92vh]"
       aria-label={label ? `Voir « ${label} »` : "Voir la vidéo"}
     >
+      {/* Blurred cover-fit backdrop — fills the empty side bars left by the
+          portrait clip on wide screens instead of plain black. */}
+      {poster && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 hidden scale-110 bg-cover bg-center blur-2xl brightness-[0.45] md:block"
+          style={{ backgroundImage: `url(${poster})` }}
+        />
+      )}
       <video
         ref={videoRef}
         src={src}
+        poster={poster}
         autoPlay
         muted
         loop
@@ -113,10 +125,16 @@ export default function VideoBreak({
       <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
       {label && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-          <span className="text-2xl font-black uppercase tracking-tight text-neutral-50 md:text-5xl">
+          <span
+            className="text-2xl font-black uppercase tracking-tight text-neutral-50 md:text-5xl"
+            style={{ textShadow: "0 2px 20px rgba(0,0,0,0.6)" }}
+          >
             {label}
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white opacity-0 transition-opacity duration-300 group-hover:opacity-70">
+          <span
+            className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-100 opacity-80 transition-opacity duration-300 group-hover:opacity-100"
+            style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}
+          >
             Voir en détail
           </span>
         </div>

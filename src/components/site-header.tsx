@@ -2,7 +2,9 @@
 
 import { motion, useScroll, useTransform } from "motion/react"
 
+import InstagramIcon from "@/components/instagram-icon"
 import { logo } from "@/lib/content"
+import { shop } from "@/lib/shop"
 
 export default function SiteHeader() {
   const { scrollY } = useScroll()
@@ -17,7 +19,7 @@ export default function SiteHeader() {
       className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 backdrop-blur-md md:px-10"
     >
       <img src={logo} alt="SUPERBIEN" className="h-6 w-auto brightness-0 invert md:h-7" />
-      <nav className="flex items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-200 md:gap-8 md:text-xs md:tracking-[0.2em]">
+      <nav className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-100 md:gap-8 md:tracking-[0.2em]">
         <a href="#boutique" className="transition-colors hover:text-white">
           Boutique
         </a>
@@ -27,8 +29,17 @@ export default function SiteHeader() {
         <a href="#avis" className="transition-colors hover:text-white">
           Avis
         </a>
-        <a href="#contact" className="transition-colors hover:text-white">
+        <a href="#contact" className="hidden transition-colors hover:text-white sm:inline">
           Contact
+        </a>
+        <a
+          href={shop.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`SUPERBIEN sur Instagram (${shop.instagramHandle})`}
+          className="text-neutral-100 transition-colors hover:text-white"
+        >
+          <InstagramIcon size={18} />
         </a>
       </nav>
     </motion.header>

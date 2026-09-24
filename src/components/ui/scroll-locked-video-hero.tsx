@@ -386,6 +386,16 @@ export default function MetroHero({
         ...style,
       }}
     >
+      {/* Blurred cover-fit backdrop — fills the empty side bars left by the
+          portrait clip on wide screens instead of plain black. */}
+      {posterSrc && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 hidden scale-110 bg-cover bg-center blur-2xl brightness-[0.45] md:block"
+          style={{ backgroundImage: `url(${posterSrc})` }}
+        />
+      )}
+
       <video
         ref={videoRef}
         src={videoSrc}

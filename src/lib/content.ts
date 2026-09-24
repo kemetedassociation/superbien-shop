@@ -110,6 +110,7 @@ export const shopImages = [
 
 export interface BreakClip {
   src: string
+  poster: string
   label: string
   caption: string
 }
@@ -117,16 +118,19 @@ export interface BreakClip {
 export const breakVideos: BreakClip[] = [
   {
     src: m("media/video/break-1.mp4"),
+    poster: m("media/img/break-1-poster.webp"),
     label: "Fraîchement déballé",
     caption: "Chaque arrivage est trié et présenté en boutique avant d'être mis en rayon.",
   },
   {
     src: m("media/video/break-2.mp4"),
+    poster: m("media/img/break-2-poster.webp"),
     label: "Pièce par pièce",
     caption: "Une sélection resserrée, pensée pièce par pièce plutôt qu'en volume.",
   },
   {
     src: m("media/video/break-3.mp4"),
+    poster: m("media/img/break-3-poster.webp"),
     label: "Dernier arrivage",
     caption: "Le dernier arrivage en boutique — quartier, lumière naturelle, rien de posé.",
   },

@@ -101,7 +101,7 @@ export default function BoutiqueSection() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10 md:mb-14"
         >
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-400">
             La boutique
           </span>
           <h2 className="mt-3 max-w-3xl text-3xl font-black uppercase leading-[1.05] tracking-tight text-neutral-50 md:text-6xl">

@@ -38,6 +38,7 @@ export default function VideoLightbox({ clip, onClose }: { clip: BreakClip | nul
 
             <video
               src={clip.src}
+              poster={clip.poster}
               autoPlay
               muted
               loop
@@ -50,7 +51,7 @@ export default function VideoLightbox({ clip, onClose }: { clip: BreakClip | nul
               <h3 className="text-xl font-black uppercase tracking-tight text-neutral-50">
                 {clip.label}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-neutral-400">{clip.caption}</p>
+              <p className="mt-2 text-base leading-relaxed text-neutral-300">{clip.caption}</p>
             </div>
           </motion.div>
         </motion.div>

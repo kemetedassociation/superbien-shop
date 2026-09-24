@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { X } from "lucide-react"
 
 import type { Outfit } from "@/lib/content"
+import { shop } from "@/lib/shop"
 import { cn } from "@/lib/utils"
 
 const SNAP_EASE = [0.34, 1.56, 0.64, 1] as const
@@ -31,7 +32,7 @@ function FeatureRow({ label, detail, index }: { label: string; detail: string; i
         <motion.span
           animate={{ rotate: open ? 45 : 0, scale: open ? 1.15 : 1 }}
           transition={{ duration: 0.35, ease: SNAP_EASE }}
-          className="text-2xl leading-none text-neutral-400"
+          className="text-2xl leading-none text-neutral-300"
         >
           +
         </motion.span>
@@ -50,7 +51,7 @@ function FeatureRow({ label, detail, index }: { label: string; detail: string; i
               initial={{ y: -6, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.05 }}
-              className="pt-3 pr-8 text-sm leading-relaxed text-neutral-400"
+              className="pt-3 pr-8 text-sm leading-relaxed text-neutral-300"
             >
               {detail}
             </motion.p>
@@ -108,19 +109,31 @@ export default function ProductSheet({ outfit, onClose }: { outfit: Outfit | nul
             </div>
 
             <div className="flex flex-1 flex-col overflow-y-auto p-6 md:p-10">
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-400">
                 Tenue {outfit.index}
               </span>
               <h3 className="mt-2 text-3xl font-black uppercase tracking-tight text-neutral-50 md:text-4xl">
                 {outfit.title}
               </h3>
-              <p className="mt-3 text-sm text-neutral-400">{outfit.note}</p>
+              <p className="mt-3 text-base text-neutral-300">{outfit.note}</p>
 
               <div className="mt-8">
                 {outfit.features.map((f, i) => (
                   <FeatureRow key={f.label} label={f.label} detail={f.detail} index={i} />
                 ))}
               </div>
+
+              <a
+                href={shop.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pointer-events-auto mt-6 inline-flex items-center justify-center gap-2 rounded-[2px] bg-neutral-50 px-5 py-3.5 text-center text-sm font-bold uppercase tracking-[0.14em] text-neutral-950 transition-opacity hover:opacity-85"
+              >
+                Demander cette tenue · DM {shop.instagramHandle}
+              </a>
+              <p className="mt-2 text-xs text-neutral-500">
+                Précisez « {outfit.title} » et votre taille, on vous répond en boutique.
+              </p>
             </div>
           </motion.div>
         </motion.div>
