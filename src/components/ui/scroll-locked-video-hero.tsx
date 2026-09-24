@@ -117,6 +117,11 @@ export default function MetroHero({
     // Once past unlockAt, the clip plays on its own timeline (video.currentTime
     // drives currentProgress) instead of the scrub target driving a seek.
     let autoplaying = false
+    // Only watch for "scrolled back up to the top" once the page has
+    // actually travelled away from it — unlock()'s own smooth scroll passes
+    // back through a near-zero rect.top in its very first frames, which would
+    // otherwise immediately re-trigger the lock and abort the transition.
+    let armedForRelock = false
 
     const onLoadedData = () => {
       duration = video.duration || 0
@@ -240,22 +245,32 @@ export default function MetroHero({
       e.preventDefault()
     }
 
-    // Re-engage the lock if the user scrolls back up into the section
-    // after it released forward. Reads the section's own rendered position
-    // rather than window.scrollY: something else on the page (e.g. a
-    // video-break section holding its own brief scroll-pause) can
-    // temporarily pin the body and make scrollY report 0 without the user
-    // having gone anywhere near the hero — a rect check isn't fooled by that.
+    // Re-engage the lock if the user scrolls back up into the section after
+    // it released forward — a firm stop at the very top, reset to frame 0,
+    // so the next scroll down replays the intro scrub from the start rather
+    // than picking up already at the unlock point. Reads the section's own
+    // rendered position rather than window.scrollY: something else on the
+    // page (e.g. a video-break section holding its own brief scroll-pause)
+    // can temporarily pin the body and make scrollY report 0 without the
+    // user having gone anywhere near the hero — a rect check isn't fooled
+    // by that.
     const onScroll = () => {
       if (locked) return
       if (document.body.style.position === "fixed") return
       const rect = section.getBoundingClientRect()
+      if (!armedForRelock) {
+        if (rect.top < -100) armedForRelock = true
+        return
+      }
       if (rect.top > -10 && rect.top < 10) {
+        armedForRelock = false
         engageLock()
         autoplaying = false
         video.pause()
-        targetProgress = unlockAt
-        currentProgress = unlockAt
+        video.currentTime = 0
+        targetProgress = 0
+        currentProgress = 0
+        hasStartedScrolling = false
       }
     }
 
