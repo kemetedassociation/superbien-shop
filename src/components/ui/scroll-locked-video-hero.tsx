@@ -179,7 +179,7 @@ export default function MetroHero({
       b.overscrollBehavior = "none"
     }
 
-    function releaseLock(targetY: number) {
+    function releaseLock(targetY: number, smooth = false) {
       if (!locked || typeof document === "undefined") return
       locked = false
       const b = document.body.style
@@ -190,13 +190,13 @@ export default function MetroHero({
       b.width = ""
       b.height = ""
       b.overscrollBehavior = ""
-      window.scrollTo(0, targetY)
+      window.scrollTo({ top: targetY, behavior: smooth ? "smooth" : "auto" })
     }
 
     // Past unlockAt: let the clip keep playing by itself and hand scrolling
     // back to the page, instead of holding the reader through the whole clip.
     const unlock = () => {
-      releaseLock(section.offsetTop + section.offsetHeight)
+      releaseLock(section.offsetTop + section.offsetHeight, true)
       autoplaying = true
       video.play().catch(() => {})
     }
@@ -405,6 +405,19 @@ export default function MetroHero({
           position: "absolute",
           inset: 0,
           background: "linear-gradient(180deg, rgba(5,7,13,0.35), rgba(5,7,13,0) 30%, rgba(5,7,13,0.15) 70%, rgba(5,7,13,0.55))",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Dissolves the clip into whatever comes next, instead of the video
+          being cut off sharply right where the next section starts. */}
+      <div
+        style={{
+          position: "absolute",
+          insetInline: 0,
+          bottom: 0,
+          height: "28%",
+          background: `linear-gradient(180deg, rgba(5,7,13,0), ${COL_BG})`,
           pointerEvents: "none",
         }}
       />
